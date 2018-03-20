@@ -1,24 +1,36 @@
 import React, {Component} from 'react';
 // Component and function
 import {Field, reduxForm} from 'redux-form';
+import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {createPost} from '../actions';
 
 class PostsNew extends Component{
     renderField(field){
+        const { meta : { touched, error } } = field;
+        const className = `form-control ${touched && error ? 'is-invalid' : ''}`;
         return(
-            <div className="form-group">
+            < div className="form-group" >
                 <label htmlFor="">{field.label}</label>
                 <input
-                    className="form-control"
+                    className = {className}
                     type="text"
                     {...field.input}
                 />
-                {field.meta.error}
+                < div className = "text-help invalid-feedback" >
+                    {
+                        touched ? error : ""
+                    }
+                </div>
             </div>
         );
 
     }
     onSubmit(values){
-        console.log(values);
+        // pushing the data to the api
+        this.props.createPost(values, () => {
+            this.props.history.push('/');
+        });
     }
     render(){
         const {handleSubmit} = this.props;
@@ -42,6 +54,7 @@ class PostsNew extends Component{
                         component={this.renderField}
                     />
                     <button type="submit" className="btn btn-primary">Submit</button>
+                    <Link to="/" className="btn btn-danger">Cancel</Link>
                 </form>
             </div>
         );
@@ -65,7 +78,10 @@ function validate(values){
     return errors;
 }
 
+// connecting redux and redux form
 export default reduxForm({
     validate,
     form: 'PostsNewForm'
-})(PostsNew);
+})(
+    connect(null, {createPost})(PostsNew)
+);

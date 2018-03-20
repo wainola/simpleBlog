@@ -11,6 +11,7 @@ import reducers from './reducers';
 
 import PostIndex from './components/post_index';
 import PostsNew from './components/posts_new';
+import './index.css';
 
 const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
 
